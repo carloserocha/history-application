@@ -1,6 +1,7 @@
 package scavenger
 
 import (
+	"fmt"
     "encoding/json"
     "net/http"
 )
@@ -31,5 +32,5 @@ type Scavenger struct {
 }
 
 func CreateScavenger(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(json.NewEncoder(w).Encode(Scavenger))
+	fmt.Println(json.NewEncoder(w).Encode(&Scavenger{}))
 }
