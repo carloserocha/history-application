@@ -1,11 +1,12 @@
 package scavenger
 
 import (
-	"fmt"
-    "encoding/json"
-    "net/http"
+	"encoding/json"
+	"log"
+	"net/http"
 )
 
+// estrutura de um gincaneiro
 type Scavenger struct {
 	Metadata struct {
 		ReceiveAt  string        `json:"receive_at"`
@@ -31,6 +32,20 @@ type Scavenger struct {
 	} `json:"user"`
 }
 
+// Cria um novo gincaneiro e retorna
 func CreateScavenger(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(json.NewEncoder(w).Encode(&Scavenger{}))
+	w.Header().Set("Content-Type", "application/json")
+	var s Scavenger
+
+	json.NewDecoder(r.Body).Decode(&s)
+
+	// do stuff
+
+	encoding, err := json.Marshal(s)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(encoding)
 }
