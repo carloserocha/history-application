@@ -32,6 +32,32 @@ type Scavenger struct {
 	} `json:"user"`
 }
 
+// Schema default to model scavenger
+type Schema struct {
+	Metadata struct {
+		ReceiveAt  string        `db:"receive_at"`
+		IPAddress  string        `db:"ip_address"`
+		Topic      string        `db:"topic"`
+		Components []interface{} `db:"components"`
+	} `db:"metadata"`
+	User struct {
+		Name    string `db:"name"`
+		Address struct {
+			City     string `db:"city"`
+			District string `db:"district"`
+			Street   string `db:"street"`
+			Number   string `db:"number"`
+			ZipCode  string `db:"zip_code"`
+		} `db:"address"`
+		Phones []struct {
+			Phone string `db:"phone"`
+		} `db:"phones"`
+		BirthDate     string `db:"birth_date"`
+		DoumentNumber string `db:"doument_number"`
+		Email         string `db:"email"`
+	} `db:"user"`
+}
+
 // Cria um novo gincaneiro e retorna
 func CreateScavenger(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
