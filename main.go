@@ -1,18 +1,16 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
 	authentication "github.com/carloserocha/history-application/authentication"
-	history "github.com/carloserocha/history-application/histories"
 	scavenger "github.com/carloserocha/history-application/scavenger"
 	"github.com/gorilla/mux"
 )
 
 func main() {
-	fmt.Println(history.SortDescendingAlphabet("sandbox playground"))
+	// fmt.Println(history.SortDescendingAlphabet("sandbox playground"))
 
 	// models.Pool()
 

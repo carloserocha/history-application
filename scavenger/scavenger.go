@@ -2,7 +2,7 @@ package scavenger
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -38,6 +38,11 @@ type Scavenger struct {
 	} `json:"user"`
 }
 
+type ScavengerError struct {
+	Error   string    `json:"error"`
+	Payload Scavenger `json:"payload"`
+}
+
 const schemaScavenger = `
 CREATE TABLE IF NOT EXISTS User (
 	user_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -65,12 +70,19 @@ func handleScanveger(s *Scavenger) {
 // Cria um novo gincaneiro e retorna
 func CreateScavenger(w http.ResponseWriter, r *http.Request) {
 
+	var sError ScavengerError
 	_, err := auth.AuthenticateAuthorize(w, r)
 
 	w.Header().Set("Content-Type", "application/json")
 
 	if err != nil {
-		w.Write([]byte(`{error: "%w"}`, err.Error())
+		sError.Error = err.Error()
+		json.NewDecoder(r.Body).Decode(&sError.Payload)
+		fmt.Println(sError)
+		eEnconding, _ := json.Marshal(&sError)
+
+		json.NewEncoder(w).Encode(eEnconding)
+
 		return
 	}
 
@@ -84,11 +96,7 @@ func CreateScavenger(w http.ResponseWriter, r *http.Request) {
 
 	handleScanveger(&s)
 
-	encoding, err := json.Marshal(s)
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	encoding, _ := json.Marshal(s)
 	w.WriteHeader(http.StatusAccepted)
-	w.Write(encoding)
+	json.NewEncoder(w).Encode(encoding)
 }
