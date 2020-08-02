@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 )
+
+const TOPIC = "scavenger"
 
 // estrutura de um gincaneiro
 type Scavenger struct {
@@ -24,7 +27,8 @@ type Scavenger struct {
 			ZipCode  string `json:"zip_code"`
 		} `json:"address"`
 		Phones []struct {
-			Phone string `json:"phone"`
+			Phone     string `json:"phone"`
+			PhoneType string `json:"phone_type"`
 		} `json:"phones"`
 		BirthDate     string `json:"birth_date"`
 		DoumentNumber string `json:"doument_number"`
@@ -32,30 +36,28 @@ type Scavenger struct {
 	} `json:"user"`
 }
 
-// Schema default to model scavenger
-type Schema struct {
-	Metadata struct {
-		ReceiveAt  string        `db:"receive_at"`
-		IPAddress  string        `db:"ip_address"`
-		Topic      string        `db:"topic"`
-		Components []interface{} `db:"components"`
-	} `db:"metadata"`
-	User struct {
-		Name    string `db:"name"`
-		Address struct {
-			City     string `db:"city"`
-			District string `db:"district"`
-			Street   string `db:"street"`
-			Number   string `db:"number"`
-			ZipCode  string `db:"zip_code"`
-		} `db:"address"`
-		Phones []struct {
-			Phone string `db:"phone"`
-		} `db:"phones"`
-		BirthDate     string `db:"birth_date"`
-		DoumentNumber string `db:"doument_number"`
-		Email         string `db:"email"`
-	} `db:"user"`
+const schemaScavenger = `
+CREATE TABLE IF NOT EXISTS User (
+	user_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_name VARCHAR(255) NOT NULL,
+    birth_date DATE,
+    document_number VARCHAR(11) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    city VARCHAR(30) NOT NULL,
+    district VARCHAR (50) NOT NULL,
+    street VARCHAR(50) NOT NULL,
+    number_residential VARCHAR(10) NOT NULL,
+    zip_code VARCHAR(8) NOT NULL,
+    mobile_phone VARCHAR(15) NOT NULL,
+    home_phone VARCHAR(15) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    payload JSON
+)
+`
+
+func handleScanveger(s *Scavenger) {
+	// s.User.Name = "Bruninho da manga"
+	// fmt.Println(s)
 }
 
 // Cria um novo gincaneiro e retorna
@@ -65,13 +67,18 @@ func CreateScavenger(w http.ResponseWriter, r *http.Request) {
 
 	json.NewDecoder(r.Body).Decode(&s)
 
-	// do stuff
+	s.Metadata.IPAddress = r.RemoteAddr
+	s.Metadata.ReceiveAt = time.Now().UTC().Local().Format(time.RFC3339Nano)
+	s.Metadata.Topic = TOPIC
+
+	handleScanveger(&s)
 
 	encoding, err := json.Marshal(s)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	w.WriteHeader(http.StatusAccepted)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(encoding)
 }

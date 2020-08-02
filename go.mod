@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/gorilla/mux v1.7.4 // indirect
-	github.com/jackc/pgproto3/v2 v2.0.4 // indirect
-	github.com/jackc/pgx/v4 v4.8.1 // indirect
-	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de // indirect
+	github.com/jackc/pgx/v4 v4.8.1
+	github.com/rocketlaunchr/mysql-go v1.1.3 // indirect
+	golang.org/x/sync v0.0.0-20200625203802-6e8e738ad208 // indirect
 )

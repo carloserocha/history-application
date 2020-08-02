@@ -8,7 +8,26 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
-const DATABASE_URL = "postgresql://[::1]:54320/"
+// Schema default to model scavenger
+type ScanvegerSchema struct {
+	Name    string `db:"user_name"`
+	Address struct {
+		City     string `db:"city"`
+		District string `db:"district"`
+		Street   string `db:"street"`
+		Number   string `db:"number_residential"`
+		ZipCode  string `db:"zip_code"`
+	} `db:"address"`
+	Phones []struct {
+		PhoneMobile string `db:"mobile_phone"`
+		PhoneHome   string `db:"home_phone"`
+	} `db:"phones"`
+	BirthDate     string `db:"birth_date"`
+	DoumentNumber string `db:"doument_number"`
+	Email         string `db:"email"`
+}
+
+const DATABASE_URL = "postgresql://localhost:54320/?user=root"
 
 func Pool() {
 	dbpool, err := pgxpool.Connect(context.Background(), DATABASE_URL)
