@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	authentication "github.com/carloerocha/history-application/authentication"
+	authentication "github.com/carloserocha/history-application/authentication"
 	history "github.com/carloserocha/history-application/histories"
 	scavenger "github.com/carloserocha/history-application/scavenger"
 	"github.com/gorilla/mux"

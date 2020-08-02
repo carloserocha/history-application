@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	auth "github.com/carloserocha/history-application/authentication"
 )
 
 const TOPIC = "scavenger"
@@ -62,7 +64,16 @@ func handleScanveger(s *Scavenger) {
 
 // Cria um novo gincaneiro e retorna
 func CreateScavenger(w http.ResponseWriter, r *http.Request) {
+
+	_, err := auth.AuthenticateAuthorize(w, r)
+
 	w.Header().Set("Content-Type", "application/json")
+
+	if err != nil {
+		w.Write([]byte(`{error: "%w"}`, err.Error())
+		return
+	}
+
 	var s Scavenger
 
 	json.NewDecoder(r.Body).Decode(&s)
@@ -79,6 +90,5 @@ func CreateScavenger(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusAccepted)
-	w.Header().Set("Content-Type", "application/json")
 	w.Write(encoding)
 }
