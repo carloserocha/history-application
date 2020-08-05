@@ -63,7 +63,6 @@ func AuthenticateLogin(w http.ResponseWriter, r *http.Request) {
 	tokenString, err := token.SignedString(JWTKEY)
 	if err != nil {
 		// If there is an error in creating the JWT return an internal server error
-		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -80,14 +79,14 @@ func AuthenticateAuthorize(w http.ResponseWriter, r *http.Request) (interface{},
 	// We can obtain the session token from the requests cookies, which come with every request
 	c, err := r.Cookie("token")
 	if err != nil {
-		if err == http.ErrNoCookie {
+		return nil, errors.New("unauthorized access")
+
+		/*if err == http.ErrNoCookie {
 			// If the cookie is not set, return an unauthorized status
-			w.WriteHeader(http.StatusUnauthorized)
-			return JWTKEY, errors.New("unauthorized")
+			return JWTKEY, errors.New("unauthorized access")
 		}
 		// For any other type of error, return a bad request status
-		w.WriteHeader(http.StatusBadRequest)
-		return JWTKEY, errors.New("bad request")
+		return JWTKEY, errors.New("bad request")*/
 	}
 
 	// Get the JWT string from the cookie
@@ -104,16 +103,14 @@ func AuthenticateAuthorize(w http.ResponseWriter, r *http.Request) (interface{},
 		return JWTKEY, nil
 	})
 	if err != nil {
-		if err == jwt.ErrSignatureInvalid {
-			w.WriteHeader(http.StatusUnauthorized)
-			return JWTKEY, errors.New("unauthorized")
+		return nil, errors.New("unauthorized access")
+		/*if err == jwt.ErrSignatureInvalid {
+			return JWTKEY, errors.New("unauthorized access")
 		}
-		w.WriteHeader(http.StatusBadRequest)
-		return JWTKEY, errors.New("bad request")
+		return JWTKEY, errors.New("bad request")*/
 	}
 	if !tkn.Valid {
-		w.WriteHeader(http.StatusUnauthorized)
-		return JWTKEY, errors.New("unauthorized")
+		return nil, errors.New("unauthorized access")
 	}
 
 	// Finally, return the welcome message to the user, along with their

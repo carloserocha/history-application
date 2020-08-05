@@ -2,10 +2,10 @@ package scavenger
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
+	boom "github.com/darahayes/go-boom"
 	auth "github.com/carloserocha/history-application/authentication"
 )
 
@@ -70,19 +70,13 @@ func handleScanveger(s *Scavenger) {
 // Cria um novo gincaneiro e retorna
 func CreateScavenger(w http.ResponseWriter, r *http.Request) {
 
-	var sError ScavengerError
+	//var sError ScavengerError
 	_, err := auth.AuthenticateAuthorize(w, r)
 
 	w.Header().Set("Content-Type", "application/json")
 
 	if err != nil {
-		sError.Error = err.Error()
-		json.NewDecoder(r.Body).Decode(&sError.Payload)
-		fmt.Println(sError)
-		eEnconding, _ := json.Marshal(&sError)
-
-		json.NewEncoder(w).Encode(eEnconding)
-
+		boom.Unathorized(w, err)
 		return
 	}
 
